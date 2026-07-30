@@ -179,12 +179,11 @@ Iterative policy evaluation was implemented successfully using the Gymnasium Fro
 
 ## Inference
 
-```
+
 The state-value function converges after repeated application of the Bellman expectation equation. States closer to the goal have higher values, while hole states and terminal states have zero value. The random policy results in relatively low state values because actions are chosen uniformly at random, reducing the probability of reaching the goal efficiently.
 
 
 
-```
 
 
 
