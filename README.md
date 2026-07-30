@@ -98,31 +98,73 @@ Where:
 
 ## Program
 
-```python
+```
+import gymnasium as gym
+import numpy as np
+
+env = gym.make("FrozenLake-v1", is_slippery=True)
+env = env.unwrapped
 
 
-# -------------------------------------------------
-# Policy Evaluation Function
-# -------------------------------------------------
+def policy_evaluation(env, gamma=0.5, theta=1e-8):
+    n_states = env.observation_space.n
+    n_actions = env.action_space.n
 
+    # Initialize value function
+    V = np.zeros(n_states)
 
-# -------------------------------------------------
-# Display Output
-# -------------------------------------------------
+    # Random policy
+    policy = np.ones((n_states, n_actions)) / n_actions
 
-# Change the parameters and observe the results
+    iterations = 0
+
+    while True:
+        delta = 0
+        new_V = np.copy(V)
+
+        for state in range(n_states):
+            v = 0
+
+            for action, action_prob in enumerate(policy[state]):
+                for prob, next_state, reward, done in env.P[state][action]:
+                    v += action_prob * prob * (
+                        reward + gamma * V[next_state] * (not done)
+                    )
+
+            delta = max(delta, abs(v - V[state]))
+            new_V[state] = v
+
+        V = new_V
+        iterations += 1
+
+        if delta < theta:
+            break
+
+    return V, iterations
+
+V, iterations = policy_evaluation(env)
+
+print("Name: shruthi D N")
+print("Reg.NO.: 212223240155")
+print("Number of Iterations:", iterations)
+print("\nState-Value Function as 4x4 Grid:\n")
+print(V.reshape((4, 4)))
 
 ```
 
----
-
 ## Output
 
-```text
-
-Number of Iterations: 
+```
+Name: shruthi D N
+Reg.NO.: 212223240155
+Number of Iterations: 17
 
 State-Value Function as 4x4 Grid:
+
+[[5.72968370e-05 1.14833186e-04 7.46554220e-04 1.24423499e-04]
+ [2.28974510e-04 0.00000000e+00 4.98664047e-03 0.00000000e+00]
+ [1.54554224e-03 1.05898347e-02 3.91465784e-02 0.00000000e+00]
+ [0.00000000e+00 4.40265693e-02 2.97596162e-01 0.00000000e+00]]
 
 
 
@@ -137,7 +179,8 @@ Iterative policy evaluation was implemented successfully using the Gymnasium Fro
 
 ## Inference
 
-```text
+```
+The state-value function converges after repeated application of the Bellman expectation equation. States closer to the goal have higher values, while hole states and terminal states have zero value. The random policy results in relatively low state values because actions are chosen uniformly at random, reducing the probability of reaching the goal efficiently.
 
 
 
